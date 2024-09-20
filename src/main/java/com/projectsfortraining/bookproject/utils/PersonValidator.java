@@ -1,7 +1,7 @@
 package com.projectsfortraining.bookproject.utils;
 
-import com.projectsfortraining.bookproject.dao.PersonDAO;
 import com.projectsfortraining.bookproject.models.Person;
+import com.projectsfortraining.bookproject.services.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -10,11 +10,11 @@ import org.springframework.validation.Validator;
 @Component
 public class PersonValidator implements Validator {
 
-    private final PersonDAO personDAO;
+    private final PeopleService peopleService;
 
     @Autowired
-    public PersonValidator(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PersonValidator(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class PersonValidator implements Validator {
     }
 
     private boolean suchNameExists(Person person){
-        return personDAO.readOne(person.getName()).isPresent();
+        return !(peopleService.findAll(person.getName()).isEmpty());
     }
 
 }
