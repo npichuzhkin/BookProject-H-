@@ -1,45 +1,54 @@
 package com.projectsfortraining.bookproject.dao;
 
 import com.projectsfortraining.bookproject.models.Person;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class PersonDAO {
-    private final JdbcTemplate jdbcTemplate;
 
+    private final SessionFactory sessionFactory;
     @Autowired
-    public PersonDAO(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate = jdbcTemplate;
+    public PersonDAO(SessionFactory sessionFactory){
+        this.sessionFactory = sessionFactory;
     }
-
+    @Transactional
     public void create(Person newPerson){
-        jdbcTemplate.update("INSERT INTO Person(name, year_of_birth) VALUES (?,?) ",
-                newPerson.getName(), newPerson.getYearOfBirth());
+        Session session = sessionFactory.getCurrentSession();
+        session.save(newPerson);
     }
-
+    @Transactional(readOnly = true)
     public Person readOne(int id){
-        return jdbcTemplate.query("SELECT * FROM Person WHERE person_id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class)).stream().findAny().orElse(null);
+        Session session = sessionFactory.getCurrentSession();
+        return (Person) session.createQuery("SELECT p FROM Person p WHERE p.personId=:id", Person.class).setParameter("id",id);
     }
-
+    @Transactional(readOnly = true)
     public Optional<Person> readOne(String name){
-        return jdbcTemplate.query("SELECT * FROM Person WHERE name=?", new Object[]{name}, new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+        Session session = sessionFactory.getCurrentSession();
+        return Optional.ofNullable((Person) session.createQuery("SELECT p FROM Person p WHERE p.name=:name", Person.class).setParameter("name", name));
     }
-
+    @Transactional(readOnly = true)
     public List<Person> readAll(){
-        return  jdbcTemplate.query("SELECT * FROM Person WHERE person_id != 0", new BeanPropertyRowMapper<>(Person.class));
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("SELECT p FROM Person p", Person.class).getResultList();
     }
-
+    @Transactional
     public void update(int id, Person updatedPerson){
-        jdbcTemplate.update("UPDATE Person SET name=?, year_of_birth=? WHERE person_id=?", updatedPerson.getName(), updatedPerson.getYearOfBirth(), id);
+        Session session = sessionFactory.getCurrentSession();
+        Person person = session.get(Person.class, id);
+        person.setName(updatedPerson.getName());
+        person.setYearOfBirth(updatedPerson.getYearOfBirth());
     }
-
+    @Transactional
     public void delete(int id){
-        jdbcTemplate.update("DELETE FROM Person WHERE person_id=?", id);
+        Session session = sessionFactory.getCurrentSession();
+        Person person = session.get(Person.class, id);
+        session.remove(person);
     }
 }

@@ -40,7 +40,7 @@ public class BooksController {
         Book book = bookDAO.readOne(id);
         model.addAttribute("book", book);
         model.addAttribute("people", personDAO.readAll());
-        model.addAttribute("person", personDAO.readOne(book.getPersonId()));
+        model.addAttribute("person", personDAO.readOne(book.getPerson().getPersonId()));
         return "books/book";
     }
 

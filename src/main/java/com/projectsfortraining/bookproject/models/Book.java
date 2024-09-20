@@ -28,6 +28,14 @@ public class Book {
     @Column(name = "year_of_release")
     private int yearOfRelease;
 
+    public Book (){}
+
+    public Book(String name, String author, int yearOfRelease) {
+        this.name = name;
+        this.author = author;
+        this.yearOfRelease = yearOfRelease;
+    }
+
     public int getBookId() {
         return bookId;
     }
@@ -66,5 +74,16 @@ public class Book {
 
     public void setYearOfRelease(int yearOfRelease) {
         this.yearOfRelease = yearOfRelease;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId=" + bookId +
+                ", person=" + person +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", yearOfRelease=" + yearOfRelease +
+                '}';
     }
 }
