@@ -31,7 +31,26 @@ public class BooksController {
     }
 
     @GetMapping
-    public String showAll(Model model){
+    public String showAll(@RequestParam(value = "sort_by_year", required = false) boolean sortByYear,
+                          @RequestParam(value = "page", required = false) String page,
+                          @RequestParam(value = "books_per_page", required = false) String booksPerPage,
+                          Model model){
+
+        if (sortByYear && booksPerPage != null){
+            model.addAttribute("books", booksService.findAll(Integer.parseInt(page),Integer.parseInt(booksPerPage),"yearOfRelease"));
+            return "books/show";
+        }
+
+        if (booksPerPage != null){
+            model.addAttribute("books", booksService.findAll(Integer.parseInt(page),Integer.parseInt(booksPerPage)));
+            return "books/show";
+        }
+
+        if (sortByYear){
+            model.addAttribute("books", booksService.findAll("yearOfRelease"));
+            return "books/show";
+        }
+
         model.addAttribute("books", booksService.findAll());
         return "books/show";
     }

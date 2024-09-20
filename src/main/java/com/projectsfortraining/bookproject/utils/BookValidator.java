@@ -32,6 +32,6 @@ public class BookValidator implements Validator {
     }
 
     private boolean suchNameExists(Book book){
-        return !(booksService.findAll(book.getName()).isEmpty());
+        return !(booksService.findAllByName(book.getName()).isEmpty());
     }
 }
