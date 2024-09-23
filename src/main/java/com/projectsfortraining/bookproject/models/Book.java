@@ -3,6 +3,9 @@ package com.projectsfortraining.bookproject.models;
 //import jakarta.persistence.*;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.Duration;
+import java.time.Period;
+import java.util.Date;
 
 @Entity
 @Table(name = "book")
@@ -28,6 +31,10 @@ public class Book {
     @Positive(message = "Год должен иметь положительное значение")
     @Column(name = "year_of_release")
     private int yearOfRelease;
+
+    @Column(name = "time_of_taking")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timeOfTaking;
 
     public Book (){}
 
@@ -77,6 +84,14 @@ public class Book {
         this.yearOfRelease = yearOfRelease;
     }
 
+    public Date getTimeOfTaking() {
+        return timeOfTaking;
+    }
+
+    public void setTimeOfTaking(Date timeOfTaking) {
+        this.timeOfTaking = timeOfTaking;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -86,5 +101,11 @@ public class Book {
                 ", author='" + author + '\'' +
                 ", yearOfRelease=" + yearOfRelease +
                 '}';
+    }
+
+    public boolean checkDelay(){
+        Date currentDate = new Date();
+        Duration duration = Duration.between(timeOfTaking.toInstant(),currentDate.toInstant());
+        return duration.toDays() >= 10;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,10 @@ public class BooksService {
         return foundBook.orElse(null);
     }
 
+    public List<Book> findByNameFirstSymbols(String symbols){
+        return booksRepository.findByNameStartingWith(symbols);
+    }
+
     public List<Book> findByPerson(Person person){
         return booksRepository.findByPerson(person);
     }
@@ -56,6 +61,7 @@ public class BooksService {
         if (booksRepository.findById(id).isPresent()){
             Book book = booksRepository.findById(id).get();
             book.setPerson(person);
+            book.setTimeOfTaking(new Date());
             booksRepository.save(book);
         }
     }

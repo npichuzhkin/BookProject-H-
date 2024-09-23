@@ -82,6 +82,15 @@ public class BooksController {
         return "redirect:/books";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam(value = "symbolBySearch", required = false) String symbols, Model model){
+        if (symbols == null) return "books/search";
+
+        model.addAttribute("bookList", booksService.findByNameFirstSymbols(symbols));
+        return "books/search";
+    }
+
+
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") int id,
             Model model){
